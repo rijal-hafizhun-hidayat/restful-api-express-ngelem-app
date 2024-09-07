@@ -2,6 +2,7 @@ import { prisma } from "../app/database";
 import { ErrorResponse } from "../error/error-response";
 import {
   toUserResponse,
+  type UserPasswordRequest,
   type UserRequest,
   type UserResponse,
 } from "../model/user-model";
@@ -109,6 +110,39 @@ export class UserService {
       prisma.user.delete({
         where: {
           id: userId,
+        },
+      }),
+    ]);
+
+    return toUserResponse(user);
+  }
+
+  static async updatePasswordByUserId(
+    userId: number,
+    request: UserPasswordRequest
+  ): Promise<UserResponse> {
+    const requestBody: UserPasswordRequest = Validation.validate(
+      UserValidation.UpdateUserPasswordRequest,
+      request
+    );
+
+    const isUserExist = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!isUserExist) {
+      throw new ErrorResponse(404, "user not found");
+    }
+
+    const [user] = await prisma.$transaction([
+      prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          password: await Bun.password.hash(requestBody.password),
         },
       }),
     ]);

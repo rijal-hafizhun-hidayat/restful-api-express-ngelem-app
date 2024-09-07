@@ -6,6 +6,10 @@ export type UserRequest = {
   password?: string;
 };
 
+export type UserPasswordRequest = {
+  password: string;
+};
+
 export type UserResponse = {
   id: number;
   name: string;
