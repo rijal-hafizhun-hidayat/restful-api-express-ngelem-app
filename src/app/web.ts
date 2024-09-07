@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { errorMiddleware } from "../middleware/error-middleware";
 import { publicApiRoute } from "../router/public-api";
+import { apiRoute } from "../router/api";
 
 const web = express();
 const corsOrigin = {
@@ -13,6 +14,7 @@ const corsOrigin = {
 web.use(cors(corsOrigin));
 web.use(express.json());
 web.use(publicApiRoute);
+web.use(apiRoute);
 web.use(errorMiddleware);
 
 export { web };
