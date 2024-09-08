@@ -4,6 +4,7 @@ import {
   toLoginResponse,
   type LoginRequest,
   type LoginResponse,
+  type RegisterRequest,
 } from "../model/auth-model";
 import { AuthValidation } from "../validation/auth-validation";
 import { Validation } from "../validation/validation";
@@ -34,6 +35,44 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new ErrorResponse(404, "username of password is wrong");
     }
+
+    const token = Jwt.sign(
+      {
+        id: user.id,
+      },
+      process.env.JWT_KEY as string,
+      { expiresIn: "1h" }
+    );
+
+    return toLoginResponse(token);
+  }
+
+  static async register(request: RegisterRequest): Promise<LoginResponse> {
+    const requestBody: RegisterRequest = Validation.validate(
+      AuthValidation.RegisterRequest,
+      request
+    );
+
+    const isEmailExist = await prisma.user.findUnique({
+      where: {
+        email: requestBody.email,
+      },
+    });
+
+    if (isEmailExist) {
+      throw new ErrorResponse(404, "email already exist");
+    }
+
+    const [user] = await prisma.$transaction([
+      prisma.user.create({
+        data: {
+          name: requestBody.name,
+          email: requestBody.email,
+          password: await Bun.password.hash(requestBody.password),
+          avatar: "avatar.png",
+        },
+      }),
+    ]);
 
     const token = Jwt.sign(
       {
