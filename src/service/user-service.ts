@@ -10,7 +10,7 @@ import { UserValidation } from "../validation/user-validation";
 import { Validation } from "../validation/validation";
 
 export class UserService {
-  static async getAll(): Promise<any> {
+  static async getAll(): Promise<UserResponse[]> {
     const users = await prisma.user.findMany({});
 
     return users;
