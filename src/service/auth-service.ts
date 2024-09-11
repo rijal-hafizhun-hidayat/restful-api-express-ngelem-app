@@ -33,7 +33,7 @@ export class AuthService {
     );
 
     if (!isPasswordValid) {
-      throw new ErrorResponse(404, "username of password is wrong");
+      throw new ErrorResponse(404, "username or password is wrong");
     }
 
     const token = Jwt.sign(

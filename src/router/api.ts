@@ -2,6 +2,7 @@ import express from "express";
 import { authMiddleware } from "../middleware/auth-middleware";
 import { RoleController } from "../controller/role-controller";
 import { UserController } from "../controller/user-controller";
+import { ProfileController } from "../controller/profile-controller";
 
 const apiRoute = express.Router();
 
@@ -22,5 +23,8 @@ apiRoute.patch(
   "/api/user/:userId/password",
   UserController.updatePasswordByUserId
 );
+
+apiRoute.get("/api/profile", ProfileController.getProfile);
+apiRoute.patch("/api/profile/name", ProfileController.updateProfileName);
 
 export { apiRoute };

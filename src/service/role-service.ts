@@ -9,7 +9,7 @@ import { RoleValidation } from "../validation/role-validation";
 import { Validation } from "../validation/validation";
 
 export class RoleService {
-  static async getAll(): Promise<any> {
+  static async getAll(): Promise<RoleResponse[]> {
     const roles = await prisma.role.findMany({});
 
     return roles;

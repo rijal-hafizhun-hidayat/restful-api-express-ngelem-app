@@ -10,6 +10,7 @@ export const authMiddleware = async (
 
   if (!tokenQuery) {
     return res.status(401).json({
+      statusCode: 401,
       data: "unauthorized",
     });
   }
@@ -21,7 +22,8 @@ export const authMiddleware = async (
     next();
   } catch (error) {
     res.status(401).json({
-      data: error,
+      statusCode: 401,
+      message: "invalid token",
     });
   }
 };
