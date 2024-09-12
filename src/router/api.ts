@@ -26,5 +26,9 @@ apiRoute.patch(
 
 apiRoute.get("/api/profile", ProfileController.getProfile);
 apiRoute.patch("/api/profile/name", ProfileController.updateProfileName);
+apiRoute.patch(
+  "/api/profile/password",
+  ProfileController.updateProfilePassword
+);
 
 export { apiRoute };

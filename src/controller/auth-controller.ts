@@ -28,6 +28,8 @@ export class AuthController {
       const result: LoginResponse = await AuthService.register(request);
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "register success",
         data: result,
       });
     } catch (error) {

@@ -5,6 +5,7 @@ import {
   toUpdateProfileNameResponse,
   type ProfileResponse,
   type UpdateProfileNameRequest,
+  type UpdateProfilePasswordRequest,
 } from "../model/profile-model";
 import { ErrorResponse } from "../error/error-response";
 import { Validation } from "../validation/validation";
@@ -60,5 +61,54 @@ export class ProfileService {
     ]);
 
     return toUpdateProfileNameResponse(user);
+  }
+
+  static async updateProfilePassword(
+    token: string,
+    request: UpdateProfilePasswordRequest
+  ): Promise<ProfileResponse> {
+    const requestBody: UpdateProfilePasswordRequest = Validation.validate(
+      ProfileValidation.UpdateProfilePasswordRequest,
+      request
+    );
+
+    const [typeToken, valueToken] = token.split(" ");
+
+    const decoded = Jwt.verify(
+      valueToken,
+      process.env.JWT_KEY as string
+    ) as JwtPayload;
+
+    const isUserExist = await prisma.user.findUnique({
+      where: {
+        id: decoded.id,
+      },
+    });
+
+    if (!isUserExist) {
+      throw new ErrorResponse(404, "user not found");
+    }
+
+    const isMatch = await Bun.password.verify(
+      requestBody.confirmationPassword,
+      isUserExist.password
+    );
+
+    if (!isMatch) {
+      throw new ErrorResponse(404, "password not match");
+    }
+
+    const [user] = await prisma.$transaction([
+      prisma.user.update({
+        where: {
+          id: decoded.id,
+        },
+        data: {
+          password: await Bun.password.hash(requestBody.newPassword),
+        },
+      }),
+    ]);
+
+    return toProfileResponse(user);
   }
 }
