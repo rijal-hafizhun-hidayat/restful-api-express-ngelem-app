@@ -5,9 +5,11 @@ import type { RoleRequest, RoleResponse } from "../model/role-model";
 export class RoleController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const result: any = await RoleService.getAll();
+      const result: RoleResponse[] = await RoleService.getAll();
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "success",
         data: result,
       });
     } catch (error) {
@@ -21,6 +23,8 @@ export class RoleController {
       const result: RoleResponse = await RoleService.findByRoleId(roleId);
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "success",
         data: result,
       });
     } catch (error) {
@@ -34,6 +38,8 @@ export class RoleController {
       const result: RoleResponse = await RoleService.store(request);
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "save role success",
         data: result,
       });
     } catch (error) {
@@ -51,6 +57,8 @@ export class RoleController {
       );
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "update role success",
         data: result,
       });
     } catch (error) {
@@ -68,6 +76,8 @@ export class RoleController {
       const result: RoleResponse = await RoleService.destroyByRoleId(roleId);
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "destroy role success",
         data: result,
       });
     } catch (error) {

@@ -9,6 +9,11 @@ export type UpdateProfileNameRequest = {
   name: string;
 };
 
+export type UpdateProfilePasswordRequest = {
+  newPassword: string;
+  confirmationPassword: string;
+};
+
 export function toProfileResponse(user: user): ProfileResponse {
   return {
     name: user.name,

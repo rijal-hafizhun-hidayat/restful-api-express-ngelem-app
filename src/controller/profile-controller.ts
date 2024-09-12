@@ -3,6 +3,7 @@ import { ProfileService } from "../service/profile-service";
 import type {
   ProfileResponse,
   UpdateProfileNameRequest,
+  UpdateProfilePasswordRequest,
 } from "../model/profile-model";
 
 export class ProfileController {
@@ -12,6 +13,8 @@ export class ProfileController {
       const result: ProfileResponse = await ProfileService.getProfile(token);
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "success",
         data: result,
       });
     } catch (error) {
@@ -32,6 +35,8 @@ export class ProfileController {
         await ProfileService.updateProfileName(token, request);
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "update name success",
         data: result,
       });
     } catch (error) {
@@ -45,6 +50,18 @@ export class ProfileController {
     next: NextFunction
   ) {
     try {
+      const token: string = req.get("Authorization") as string;
+      const request: UpdateProfilePasswordRequest =
+        req.body as UpdateProfilePasswordRequest;
+
+      const result: ProfileResponse =
+        await ProfileService.updateProfilePassword(token, request);
+
+      return res.status(200).json({
+        statusCode: 200,
+        message: "update password success",
+        data: result,
+      });
     } catch (error) {
       next(error);
     }

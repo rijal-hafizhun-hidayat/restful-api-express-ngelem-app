@@ -9,9 +9,11 @@ import { UserService } from "../service/user-service";
 export class UserController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const result: any = await UserService.getAll();
+      const result: UserResponse[] = await UserService.getAll();
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "success",
         data: result,
       });
     } catch (error) {
@@ -25,6 +27,8 @@ export class UserController {
       const result: UserResponse = await UserService.store(request);
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "save user success",
         data: result,
       });
     } catch (error) {
@@ -38,6 +42,8 @@ export class UserController {
       const result: UserResponse = await UserService.findByUserId(userId);
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "success",
         data: result,
       });
     } catch (error) {
@@ -55,6 +61,8 @@ export class UserController {
       );
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "update role success",
         data: result,
       });
     } catch (error) {
@@ -72,6 +80,8 @@ export class UserController {
       const result: UserResponse = await UserService.destroyByUserId(userId);
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "destroy role success",
         data: result,
       });
     } catch (error) {
@@ -93,6 +103,8 @@ export class UserController {
       );
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "update password success",
         data: result,
       });
     } catch (error) {
