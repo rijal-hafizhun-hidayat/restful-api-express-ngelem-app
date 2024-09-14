@@ -5,5 +5,6 @@ const publicApiRoute = express.Router();
 
 publicApiRoute.post("/api/login", AuthController.login);
 publicApiRoute.post("/api/register", AuthController.register);
+publicApiRoute.post("/api/reset-password", AuthController.resetPasswordByEmail);
 
 export { publicApiRoute };

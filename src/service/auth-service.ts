@@ -2,10 +2,16 @@ import { prisma } from "../app/database";
 import { ErrorResponse } from "../error/error-response";
 import {
   toLoginResponse,
+  type ResetPasswordRequest,
   type LoginRequest,
   type LoginResponse,
   type RegisterRequest,
+  toResetPasswordResponse,
+  type ResetPasswordResponse,
+  type DataEmail,
 } from "../model/auth-model";
+import { DateUtils } from "../utils/date-utils";
+import { SendEmailUtils } from "../utils/send-email-utils";
 import { AuthValidation } from "../validation/auth-validation";
 import { Validation } from "../validation/validation";
 import Jwt from "jsonwebtoken";
@@ -83,5 +89,66 @@ export class AuthService {
     );
 
     return toLoginResponse(token);
+  }
+
+  static async resetPasswordByEmail(
+    request: ResetPasswordRequest
+  ): Promise<any> {
+    const requestBody: ResetPasswordRequest = Validation.validate(
+      AuthValidation.ResetPasswordRequest,
+      request
+    );
+
+    const isEmailExist = await prisma.user.findUnique({
+      where: {
+        email: requestBody.email,
+      },
+    });
+
+    if (!isEmailExist) {
+      throw new ErrorResponse(404, "email not exist");
+    }
+
+    const generateToken: number = Math.floor(1000 + Math.random() * 9000);
+
+    const isResetPasswordExist = await prisma.password_reset.findUnique({
+      where: {
+        user_id: isEmailExist.id,
+      },
+    });
+
+    if (isResetPasswordExist) {
+      await prisma.$transaction([
+        prisma.password_reset.delete({
+          where: {
+            user_id: isEmailExist.id,
+          },
+        }),
+      ]);
+    }
+
+    const date = new Date();
+    const expiredAt = await DateUtils.addMinutes(date, 10);
+
+    const [passwordReset] = await prisma.$transaction([
+      prisma.password_reset.create({
+        data: {
+          token: generateToken,
+          user_id: isEmailExist.id,
+          expired_at: expiredAt,
+        },
+      }),
+    ]);
+
+    const dataEmail: DataEmail = {
+      from: "rijal.1344@gmail.com",
+      to: isEmailExist.email,
+      subject: "token reset password",
+      text: `Dear ${isEmailExist.email}, here is the token reset password, ${generateToken}`,
+    };
+
+    const sendEmail = await SendEmailUtils.send(dataEmail);
+
+    return sendEmail;
   }
 }

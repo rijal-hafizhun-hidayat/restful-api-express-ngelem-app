@@ -12,4 +12,8 @@ export class AuthValidation {
     email: string().email().min(1).max(100),
     password: string().min(1).max(100),
   });
+
+  static readonly ResetPasswordRequest: ZodType = z.object({
+    email: string().email().min(1).max(100),
+  });
 }
