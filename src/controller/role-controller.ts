@@ -20,7 +20,7 @@ export class RoleController {
   static async findByRoleId(req: Request, res: Response, next: NextFunction) {
     try {
       const roleId: number = parseInt(req.params.roleId) as number;
-      const result: RoleResponse = await RoleService.findByRoleId(roleId);
+      const result: any = await RoleService.findByRoleId(roleId);
 
       return res.status(200).json({
         statusCode: 200,
@@ -35,7 +35,7 @@ export class RoleController {
   static async store(req: Request, res: Response, next: NextFunction) {
     try {
       const request: RoleRequest = req.body as RoleRequest;
-      const result: RoleResponse = await RoleService.store(request);
+      const result: any = await RoleService.store(request);
 
       return res.status(200).json({
         statusCode: 200,
