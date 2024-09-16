@@ -1,4 +1,4 @@
-import { string, z, type ZodType } from "zod";
+import { number, string, z, type ZodType } from "zod";
 
 export class AuthValidation {
   static readonly LoginRequest: ZodType = z.object({
@@ -14,6 +14,12 @@ export class AuthValidation {
   });
 
   static readonly ResetPasswordRequest: ZodType = z.object({
-    email: string().email().min(1).max(100),
+    email: string().min(1).max(100).email(),
+  });
+
+  static readonly UpdatePasswordRequest: ZodType = z.object({
+    token: string().min(1),
+    otp: number().int(),
+    password: string().min(1).max(100),
   });
 }

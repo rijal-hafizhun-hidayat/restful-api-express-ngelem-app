@@ -1,3 +1,5 @@
+import moment from "moment";
+import "moment-timezone";
 import { prisma } from "../app/database";
 import { ErrorResponse } from "../error/error-response";
 import {
@@ -29,7 +31,7 @@ export class RoleService {
     return toRoleResponse(role);
   }
 
-  static async store(request: any): Promise<RoleResponse> {
+  static async store(request: any): Promise<any> {
     const requestBody: RoleRequest = Validation.validate(
       RoleValidation.RoleRequest,
       request

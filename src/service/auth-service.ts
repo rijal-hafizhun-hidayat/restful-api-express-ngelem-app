@@ -9,12 +9,15 @@ import {
   toResetPasswordResponse,
   type ResetPasswordResponse,
   type DataEmail,
+  type UpdatePasswordRequest,
+  toUpdatePasswordResponse,
+  type UpdatePasswordResponse,
 } from "../model/auth-model";
 import { DateUtils } from "../utils/date-utils";
 import { SendEmailUtils } from "../utils/send-email-utils";
 import { AuthValidation } from "../validation/auth-validation";
 import { Validation } from "../validation/validation";
-import Jwt from "jsonwebtoken";
+import Jwt, { type JwtPayload } from "jsonwebtoken";
 
 export class AuthService {
   static async login(request: LoginRequest): Promise<LoginResponse> {
@@ -93,7 +96,7 @@ export class AuthService {
 
   static async resetPasswordByEmail(
     request: ResetPasswordRequest
-  ): Promise<any> {
+  ): Promise<ResetPasswordResponse> {
     const requestBody: ResetPasswordRequest = Validation.validate(
       AuthValidation.ResetPasswordRequest,
       request
@@ -130,7 +133,7 @@ export class AuthService {
     const date = new Date();
     const expiredAt = await DateUtils.addMinutes(date, 10);
 
-    const [passwordReset] = await prisma.$transaction([
+    await prisma.$transaction([
       prisma.password_reset.create({
         data: {
           token: generateToken,
@@ -147,8 +150,65 @@ export class AuthService {
       text: `Dear ${isEmailExist.email}, here is the token reset password, ${generateToken}`,
     };
 
-    const sendEmail = await SendEmailUtils.send(dataEmail);
+    await SendEmailUtils.send(dataEmail);
 
-    return sendEmail;
+    const token = Jwt.sign(
+      {
+        isResetPassword: true,
+      },
+      process.env.JWT_KEY as string,
+      { expiresIn: 600000 }
+    );
+
+    return toResetPasswordResponse(token);
+  }
+
+  static async updatePasswordByOtp(
+    request: UpdatePasswordRequest
+  ): Promise<any> {
+    const requestBody: UpdatePasswordRequest = Validation.validate(
+      AuthValidation.UpdatePasswordRequest,
+      request
+    );
+
+    try {
+      Jwt.verify(
+        requestBody.token,
+        process.env.JWT_KEY as string
+      ) as JwtPayload;
+    } catch (error) {
+      throw new ErrorResponse(404, "token invalid");
+    }
+
+    const isResetPassword = await prisma.password_reset.findUnique({
+      where: {
+        token: requestBody.otp,
+      },
+    });
+
+    if (!isResetPassword) {
+      throw new ErrorResponse(404, "otp invalid");
+    }
+
+    const currentTimeStamp: Date = new Date();
+
+    if (currentTimeStamp > isResetPassword.expired_at) {
+      throw new ErrorResponse(404, "otp expired");
+    }
+
+    const newPassword = await Bun.password.hash(requestBody.password);
+
+    const [user] = await prisma.$transaction([
+      prisma.user.update({
+        where: {
+          id: isResetPassword.user_id,
+        },
+        data: {
+          password: newPassword,
+        },
+      }),
+    ]);
+
+    return toUpdatePasswordResponse(user);
   }
 }

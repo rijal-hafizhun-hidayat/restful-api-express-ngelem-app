@@ -5,6 +5,7 @@ import type {
   RegisterRequest,
   ResetPasswordRequest,
   ResetPasswordResponse,
+  UpdatePasswordRequest,
 } from "../model/auth-model";
 import { AuthService } from "../service/auth-service";
 
@@ -46,11 +47,31 @@ export class AuthController {
   ) {
     try {
       const request: ResetPasswordRequest = req.body as ResetPasswordRequest;
-      const result: any = await AuthService.resetPasswordByEmail(request);
+      const result: ResetPasswordResponse =
+        await AuthService.resetPasswordByEmail(request);
 
       return res.status(200).json({
         statusCode: 200,
         message: "send email success",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updatePasswordByOtp(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const request: UpdatePasswordRequest = req.body as UpdatePasswordRequest;
+      const result: any = await AuthService.updatePasswordByOtp(request);
+
+      return res.status(200).json({
+        statusCode: 200,
+        message: "reset password success",
         data: result,
       });
     } catch (error) {

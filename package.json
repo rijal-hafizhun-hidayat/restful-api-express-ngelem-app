@@ -22,6 +22,8 @@
     "express": "^4.21.0",
     "handlebars": "^4.7.8",
     "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.5.45",
     "nodemailer": "^6.9.15",
     "prisma": "^5.19.1",
     "winston": "^3.14.2",

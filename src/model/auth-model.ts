@@ -11,8 +11,17 @@ export type ResetPasswordRequest = {
 };
 
 export type ResetPasswordResponse = {
-  token: number;
-  expired_at: Date;
+  token: string;
+};
+
+export type UpdatePasswordRequest = {
+  token: string;
+  otp: number;
+  password: string;
+};
+
+export type UpdatePasswordResponse = {
+  email: string;
 };
 
 export type RegisterRequest = {
@@ -40,10 +49,15 @@ export function toLoginResponse(token: string): LoginResponse {
 }
 
 export function toResetPasswordResponse(
-  passwordReset: password_reset
+  valueToken: string
 ): ResetPasswordResponse {
   return {
-    token: passwordReset.token,
-    expired_at: passwordReset.expired_at,
+    token: valueToken,
+  };
+}
+
+export function toUpdatePasswordResponse(user: user): UpdatePasswordResponse {
+  return {
+    email: user.email,
   };
 }
