@@ -6,6 +6,7 @@ import type {
   ResetPasswordRequest,
   ResetPasswordResponse,
   UpdatePasswordRequest,
+  UpdatePasswordResponse,
 } from "../model/auth-model";
 import { AuthService } from "../service/auth-service";
 
@@ -67,7 +68,8 @@ export class AuthController {
   ) {
     try {
       const request: UpdatePasswordRequest = req.body as UpdatePasswordRequest;
-      const result: any = await AuthService.updatePasswordByOtp(request);
+      const result: UpdatePasswordResponse =
+        await AuthService.updatePasswordByOtp(request);
 
       return res.status(200).json({
         statusCode: 200,

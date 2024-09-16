@@ -165,7 +165,7 @@ export class AuthService {
 
   static async updatePasswordByOtp(
     request: UpdatePasswordRequest
-  ): Promise<any> {
+  ): Promise<UpdatePasswordResponse> {
     const requestBody: UpdatePasswordRequest = Validation.validate(
       AuthValidation.UpdatePasswordRequest,
       request
