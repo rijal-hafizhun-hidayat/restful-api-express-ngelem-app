@@ -9,10 +9,13 @@ export const authMiddleware = async (
   const tokenQuery: string = req.get("Authorization") as string;
 
   if (!tokenQuery) {
-    return res.status(401).json({
-      statusCode: 401,
-      data: "unauthorized",
-    });
+    res
+      .status(401)
+      .json({
+        statusCode: 401,
+        errors: "unauthorized",
+      })
+      .end();
   }
 
   const [typeToken, token] = tokenQuery.split(" ");
@@ -20,10 +23,13 @@ export const authMiddleware = async (
   try {
     Jwt.verify(token, process.env.JWT_KEY as string);
     next();
-  } catch (error) {
-    res.status(401).json({
-      statusCode: 401,
-      message: "invalid token",
-    });
+  } catch (error: any) {
+    res
+      .status(401)
+      .json({
+        statusCode: 401,
+        errors: error.errors.message,
+      })
+      .end();
   }
 };

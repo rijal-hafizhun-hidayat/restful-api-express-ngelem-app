@@ -15,6 +15,16 @@ export type UpdateProfilePasswordRequest = {
   confirmationPassword: string;
 };
 
+export type SendOtpChangeEmailRequest = {
+  email: string;
+};
+
+export type UpdateEmailByOtpRequest = {
+  otp: number;
+  oldEmail: string;
+  newEmail: string;
+};
+
 export function toProfileResponse(user: user): ProfileResponse {
   return {
     name: user.name,
@@ -28,5 +38,17 @@ export function toUpdateProfileNameResponse(
 ): UpdateProfileNameRequest {
   return {
     name: user.name,
+  };
+}
+
+export function toEmailResetResponse(user: user): SendOtpChangeEmailRequest {
+  return {
+    email: user.email,
+  };
+}
+
+export function toUpdateEmailResponse(user: user): SendOtpChangeEmailRequest {
+  return {
+    email: user.email,
   };
 }
