@@ -24,6 +24,7 @@ model user {
 
   user_role      user_role[]
   password_reset password_reset?
+  email_reset    email_reset?
 }
 
 model role {
@@ -50,6 +51,15 @@ model user_role {
 model password_reset {
   id         Int      @id @default(autoincrement())
   token      Int      @unique
+  user_id    Int      @unique
+  expired_at DateTime
+
+  user user @relation(fields: [user_id], references: [id])
+}
+
+model email_reset {
+  id         Int      @id @default(autoincrement())
+  otp        Int      @unique
   user_id    Int      @unique
   expired_at DateTime
 

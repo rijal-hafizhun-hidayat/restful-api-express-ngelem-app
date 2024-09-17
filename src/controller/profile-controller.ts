@@ -2,6 +2,8 @@ import type { NextFunction, Request, Response } from "express";
 import { ProfileService } from "../service/profile-service";
 import type {
   ProfileResponse,
+  SendOtpChangeEmailRequest,
+  UpdateEmailByOtpRequest,
   UpdateProfileNameRequest,
   UpdateProfilePasswordRequest,
 } from "../model/profile-model";
@@ -60,6 +62,48 @@ export class ProfileController {
       return res.status(200).json({
         statusCode: 200,
         message: "update password success",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async sendOtpChangeEmail(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const request: SendOtpChangeEmailRequest =
+        req.body as SendOtpChangeEmailRequest;
+      const result: SendOtpChangeEmailRequest =
+        await ProfileService.sendOtpChangeEmail(request);
+
+      return res.status(200).json({
+        statusCode: 200,
+        message: "send otp success, please check your email",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateEmailByOtp(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const request: UpdateEmailByOtpRequest =
+        req.body as UpdateEmailByOtpRequest;
+      const result: SendOtpChangeEmailRequest =
+        await ProfileService.updateEmailByOtp(request);
+
+      return res.status(200).json({
+        statusCode: 200,
+        message: "update email success",
         data: result,
       });
     } catch (error) {

@@ -30,5 +30,10 @@ apiRoute.patch(
   "/api/profile/password",
   ProfileController.updateProfilePassword
 );
+apiRoute.post(
+  "/api/profile/send-otp-email",
+  ProfileController.sendOtpChangeEmail
+);
+apiRoute.patch("/api/profile/update-email", ProfileController.updateEmailByOtp);
 
 export { apiRoute };
