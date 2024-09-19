@@ -33,7 +33,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new ErrorResponse(400, "username or password is wrong");
+      throw new ErrorResponse(404, "username or password is wrong");
     }
 
     const isPasswordValid = await Bun.password.verify(
