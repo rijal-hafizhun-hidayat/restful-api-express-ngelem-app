@@ -3,6 +3,7 @@ import { authMiddleware } from "../middleware/auth-middleware";
 import { RoleController } from "../controller/role-controller";
 import { UserController } from "../controller/user-controller";
 import { ProfileController } from "../controller/profile-controller";
+import { upload } from "../app/upload";
 
 const apiRoute = express.Router();
 
@@ -35,5 +36,10 @@ apiRoute.post(
   ProfileController.sendOtpChangeEmail
 );
 apiRoute.patch("/api/profile/update-email", ProfileController.updateEmailByOtp);
+apiRoute.patch(
+  "/api/profile/update-image",
+  upload.single("file"),
+  ProfileController.updateProfileImage
+);
 
 export { apiRoute };

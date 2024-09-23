@@ -15,6 +15,10 @@ export type UpdateProfilePasswordRequest = {
   confirmationPassword: string;
 };
 
+export type UpdateProfileImageResponse = {
+  avatar: string;
+};
+
 export type SendOtpChangeEmailRequest = {
   email: string;
 };
@@ -50,5 +54,13 @@ export function toEmailResetResponse(user: user): SendOtpChangeEmailRequest {
 export function toUpdateEmailResponse(user: user): SendOtpChangeEmailRequest {
   return {
     email: user.email,
+  };
+}
+
+export function toUpdateProfileImageResponse(
+  user: user
+): UpdateProfileImageResponse {
+  return {
+    avatar: user.avatar,
   };
 }
