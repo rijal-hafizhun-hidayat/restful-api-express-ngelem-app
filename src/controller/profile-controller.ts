@@ -4,6 +4,7 @@ import type {
   ProfileResponse,
   SendOtpChangeEmailRequest,
   UpdateEmailByOtpRequest,
+  UpdateProfileImageResponse,
   UpdateProfileNameRequest,
   UpdateProfilePasswordRequest,
 } from "../model/profile-model";
@@ -104,6 +105,25 @@ export class ProfileController {
       return res.status(200).json({
         statusCode: 200,
         message: "update email success",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateProfileImage(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const token: string = req.get("Authorization") as string;
+      const file = req.file as Express.Multer.File;
+      const result: UpdateProfileImageResponse =
+        await ProfileService.updateProfileImage(token, file);
+
+      return res.status(200).json({
         data: result,
       });
     } catch (error) {

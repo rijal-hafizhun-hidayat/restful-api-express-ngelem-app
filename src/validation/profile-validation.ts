@@ -18,4 +18,15 @@ export class ProfileValidation {
     otp: number().int(),
     newEmail: string().min(1).max(100).email(),
   });
+
+  static readonly UpdateProfileImageRequest: ZodType = z.object({
+    originalname: string().min(1),
+    mimetype: string().refine(
+      (type) => ["image/jpeg", "image/png"].includes(type),
+      {
+        message: "Unsupported file type",
+      }
+    ),
+    size: number().max(1024 * 1024 * 2),
+  });
 }

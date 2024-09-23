@@ -4,10 +4,12 @@ import {
   toEmailResetResponse,
   toProfileResponse,
   toUpdateEmailResponse,
+  toUpdateProfileImageResponse,
   toUpdateProfileNameResponse,
   type ProfileResponse,
   type SendOtpChangeEmailRequest,
   type UpdateEmailByOtpRequest,
+  type UpdateProfileImageResponse,
   type UpdateProfileNameRequest,
   type UpdateProfilePasswordRequest,
 } from "../model/profile-model";
@@ -17,6 +19,7 @@ import { ProfileValidation } from "../validation/profile-validation";
 import { DateUtils } from "../utils/date-utils";
 import type { DataEmail } from "../model/auth-model";
 import { SendEmailUtils } from "../utils/send-email-utils";
+import { StoreFile } from "../utils/store-file";
 
 export class ProfileService {
   static async getProfile(token: string): Promise<ProfileResponse> {
@@ -226,5 +229,34 @@ export class ProfileService {
     ]);
 
     return toUpdateEmailResponse(user);
+  }
+
+  static async updateProfileImage(
+    token: string,
+    file: Express.Multer.File
+  ): Promise<UpdateProfileImageResponse> {
+    const [typeToken, valueToken] = token.split(" ");
+
+    const decoded = Jwt.verify(
+      valueToken,
+      process.env.JWT_KEY as string
+    ) as JwtPayload;
+
+    Validation.validate(ProfileValidation.UpdateProfileImageRequest, file);
+
+    const filePath = await StoreFile.storePhoto(file, "uploads");
+
+    const [user] = await prisma.$transaction([
+      prisma.user.update({
+        where: {
+          id: decoded.id,
+        },
+        data: {
+          avatar: filePath,
+        },
+      }),
+    ]);
+
+    return toUpdateProfileImageResponse(user);
   }
 }
