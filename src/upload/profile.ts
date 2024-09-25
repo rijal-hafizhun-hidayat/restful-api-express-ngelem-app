@@ -2,7 +2,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-const uploadDir = path.join("src", "storage", "profile");
+const uploadDir = path.join("storage", "profile");
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, {
@@ -19,6 +19,6 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const uploadProfile = multer({ storage });
 
-export { upload };
+export { uploadProfile };
