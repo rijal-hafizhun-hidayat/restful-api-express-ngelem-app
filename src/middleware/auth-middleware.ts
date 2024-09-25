@@ -9,27 +9,22 @@ export const authMiddleware = async (
   const tokenQuery: string = req.get("Authorization") as string;
 
   if (!tokenQuery) {
-    res
-      .status(401)
-      .json({
-        statusCode: 401,
-        errors: "unauthorized",
-      })
-      .end();
+    return res.status(401).json({
+      statusCode: 401,
+      errors: "unauthorized",
+    });
   }
 
-  const [typeToken, token] = tokenQuery.split(" ");
+  const [, token] = tokenQuery.split(" ");
 
   try {
-    Jwt.verify(token, process.env.JWT_KEY as string);
-    next();
+    const decoded = Jwt.verify(token, process.env.JWT_KEY as string);
+    (req as any).id = (decoded as any).id;
+    return next();
   } catch (error: any) {
-    res
-      .status(401)
-      .json({
-        statusCode: 401,
-        errors: error.errors.message,
-      })
-      .end();
+    return res.status(401).json({
+      statusCode: 401,
+      errors: error.errors.message,
+    });
   }
 };
