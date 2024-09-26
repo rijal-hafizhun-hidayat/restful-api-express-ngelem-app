@@ -33,7 +33,7 @@ model role {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  user_role user_role[]
+  role user_role[]
 }
 
 model user_role {

@@ -4,66 +4,69 @@ import { RoleController } from "../controller/role-controller";
 import { UserController } from "../controller/user-controller";
 import { ProfileController } from "../controller/profile-controller";
 import { uploadProfile } from "../upload/profile";
+import { adminMiddleware } from "../middleware/admin-middleware";
+import { userMiddleware } from "../middleware/user-middleware";
 
 const apiRoute = express();
+apiRoute.use(authMiddleware);
 
-apiRoute.get("/api/role", authMiddleware, RoleController.getAll);
-apiRoute.post("/api/role", authMiddleware, RoleController.store);
-apiRoute.get("/api/role/:roleId", authMiddleware, RoleController.findByRoleId);
+apiRoute.get("/api/role", adminMiddleware, RoleController.getAll);
+apiRoute.post("/api/role", adminMiddleware, RoleController.store);
+apiRoute.get("/api/role/:roleId", adminMiddleware, RoleController.findByRoleId);
 apiRoute.put(
   "/api/role/:roleId",
-  authMiddleware,
+  adminMiddleware,
   RoleController.updateByRoleId
 );
 apiRoute.delete(
   "/api/role/:roleId",
-  authMiddleware,
+  adminMiddleware,
   RoleController.destroyByRoleId
 );
 
-apiRoute.get("/api/user", authMiddleware, UserController.getAll);
-apiRoute.post("/api/user", authMiddleware, UserController.store);
-apiRoute.get("/api/user/:userId", authMiddleware, UserController.findByUserId);
+apiRoute.get("/api/user", adminMiddleware, UserController.getAll);
+apiRoute.post("/api/user", adminMiddleware, UserController.store);
+apiRoute.get("/api/user/:userId", adminMiddleware, UserController.findByUserId);
 apiRoute.put(
   "/api/user/:userId",
-  authMiddleware,
+  adminMiddleware,
   UserController.updateByUserId
 );
 apiRoute.delete(
   "/api/user/:userId",
-  authMiddleware,
+  adminMiddleware,
   UserController.destroyByUserId
 );
 apiRoute.patch(
   "/api/user/:userId/password",
-  authMiddleware,
+  adminMiddleware,
   UserController.updatePasswordByUserId
 );
 
-apiRoute.get("/api/profile", authMiddleware, ProfileController.getProfile);
+apiRoute.get("/api/profile", userMiddleware, ProfileController.getProfile);
 apiRoute.patch(
   "/api/profile/name",
-  authMiddleware,
+  userMiddleware,
   ProfileController.updateProfileName
 );
 apiRoute.patch(
   "/api/profile/password",
-  authMiddleware,
+  userMiddleware,
   ProfileController.updateProfilePassword
 );
 apiRoute.post(
   "/api/profile/send-otp-email",
-  authMiddleware,
+  userMiddleware,
   ProfileController.sendOtpChangeEmail
 );
 apiRoute.patch(
   "/api/profile/update-email",
-  authMiddleware,
+  userMiddleware,
   ProfileController.updateEmailByOtp
 );
 apiRoute.patch(
   "/api/profile/update-image",
-  authMiddleware,
+  userMiddleware,
   uploadProfile.single("file"),
   ProfileController.updateProfileImage
 );
