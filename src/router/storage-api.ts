@@ -2,6 +2,6 @@ import express from "express";
 
 const storageApiRoute = express();
 
-storageApiRoute.use("/api/storage", express.static("storage/profile"));
+storageApiRoute.use("/api/storage/profile", express.static("storage/profile"));
 
 export { storageApiRoute };
