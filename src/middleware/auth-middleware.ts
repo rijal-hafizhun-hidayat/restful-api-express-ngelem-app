@@ -24,7 +24,7 @@ export const authMiddleware = async (
   } catch (error: any) {
     return res.status(401).json({
       statusCode: 401,
-      errors: error.errors.message,
+      errors: "unauthorized",
     });
   }
 };
