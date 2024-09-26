@@ -19,6 +19,8 @@ import { ProfileValidation } from "../validation/profile-validation";
 import { DateUtils } from "../utils/date-utils";
 import type { DataEmail } from "../model/auth-model";
 import { SendEmailUtils } from "../utils/send-email-utils";
+import type { Request } from "express";
+import { DestroyFile } from "../utils/destroy-file";
 
 export class ProfileService {
   static async getProfile(token: string): Promise<ProfileResponse> {
@@ -231,20 +233,21 @@ export class ProfileService {
   }
 
   static async updateProfileImage(
-    token: string,
+    req: Request,
     file: Express.Multer.File
   ): Promise<UpdateProfileImageResponse> {
-    const [typeToken, valueToken] = token.split(" ");
+    const user = await prisma.user.findUnique({
+      where: {
+        id: (req as any).id,
+      },
+    });
 
-    const decoded = Jwt.verify(
-      valueToken,
-      process.env.JWT_KEY as string
-    ) as JwtPayload;
+    await DestroyFile.unlink(`storage/profile/${user?.avatar}`);
 
-    const [user] = await prisma.$transaction([
+    const [updateImage] = await prisma.$transaction([
       prisma.user.update({
         where: {
-          id: decoded.id,
+          id: (req as any).id,
         },
         data: {
           avatar: file.filename,
@@ -252,6 +255,6 @@ export class ProfileService {
       }),
     ]);
 
-    return toUpdateProfileImageResponse(user);
+    return toUpdateProfileImageResponse(updateImage);
   }
 }

@@ -118,12 +118,13 @@ export class ProfileController {
     next: NextFunction
   ) {
     try {
-      const token: string = req.get("Authorization") as string;
       const file = req.file as Express.Multer.File;
       const result: UpdateProfileImageResponse =
-        await ProfileService.updateProfileImage(token, file);
+        await ProfileService.updateProfileImage(req, file);
 
       return res.status(200).json({
+        statusCode: 200,
+        message: "update image profile success",
         data: result,
       });
     } catch (error) {
