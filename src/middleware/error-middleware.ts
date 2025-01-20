@@ -10,14 +10,17 @@ export const errorMiddleware = (
 ) => {
   if (error instanceof ZodError) {
     res.status(400).json({
+      statusCode: 400,
       errors: error.format(),
     });
   } else if (error instanceof ErrorResponse) {
     res.status(error.status).json({
+      statusCode: error.status,
       errors: error.message,
     });
   } else {
     res.status(500).json({
+      statusCode: 500,
       errors: error.message,
     });
   }

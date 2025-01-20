@@ -16,13 +16,15 @@ datasource db {
 model user {
   id         Int      @id @default(autoincrement())
   name       String   @db.VarChar(255)
-  email      String   @db.VarChar(255)
+  email      String   @unique @db.VarChar(255)
   password   String   @db.VarChar(255)
-  avatar     String?  @db.VarChar(255)
+  avatar     String   @db.VarChar(255)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  user_role user_role[]
+  user_role      user_role[]
+  password_reset password_reset?
+  email_reset    email_reset?
 }
 
 model role {
@@ -31,7 +33,7 @@ model role {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  user_role user_role[]
+  role user_role[]
 }
 
 model user_role {
@@ -44,4 +46,22 @@ model user_role {
   role role @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([user_id, role_id])
+}
+
+model password_reset {
+  id         Int      @id @default(autoincrement())
+  token      Int      @unique
+  user_id    Int      @unique
+  expired_at DateTime
+
+  user user @relation(fields: [user_id], references: [id])
+}
+
+model email_reset {
+  id         Int      @id @default(autoincrement())
+  otp        Int      @unique
+  user_id    Int      @unique
+  expired_at DateTime
+
+  user user @relation(fields: [user_id], references: [id])
 }
